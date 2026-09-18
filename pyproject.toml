@@ -1,0 +1,52 @@
+[project]
+name = "opencv-range-preview"
+version = "0.1.0"
+description = "HSV/RGB range slider preview tool for OpenCV masking"
+requires-python = ">=3.10"
+dependencies = [
+    "pyside6>=6.11,<7",
+    "opencv-python>=5,<6",
+    "numpy>=2.2,<3",
+    "pillow>=12,<13",
+    "typing-extensions>=4.16.0",
+]
+
+[project.scripts]
+opencv-range-preview = "opencv_range_preview.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# hatchling ships every non-Python file under the package directory
+# (ui/*.qml) in the wheel without further configuration.
+[tool.hatch.build.targets.wheel]
+packages = ["src/opencv_range_preview"]
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+# E/F: pycodestyle errors + pyflakes; I: import order; UP: modernize
+# syntax to the target version; B: common bug patterns. Deliberately
+# conservative - naming and docstring rule sets stay off.
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.basedpyright]
+# basedpyright's "recommended" strictness, minus the rules that fight
+# the idioms of this stack:
+# - reportAny: numpy's ndarray typing yields Any on ordinary use
+#   (tuple unpacking of .shape, dtype parameters)
+# - reportUnannotatedClassAttribute: would demand annotations on every
+#   Qt Signal() class attribute and inherited masker field
+# - reportUnusedCallResult: Qt's connect() always discards its result
+reportAny = false
+reportUnannotatedClassAttribute = false
+reportUnusedCallResult = false
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.40.1",
+    "ruff>=0.16.8",
+]
+
